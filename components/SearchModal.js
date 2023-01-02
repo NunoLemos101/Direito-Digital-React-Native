@@ -11,6 +11,7 @@ import { searchForResults } from "../utility";
 
 const civilArea = ["CC", "CPC", "CRP", "CRCivil"]
 const civilQaArea = ["QA_PC_EXECUTIVO", "QA_PC_DECLARATIVO"]
+const civilLexionarioArea = ["TGDC_LEX"]
 const civilIndiceArea = ["CC_INDICE", "CPC_INDICE"]
 const penalArea = ["CP", "CPP", "RGIT"]
 const administrativoArea = ["CPA", "CPTA"]
@@ -40,7 +41,8 @@ const dict = {
     "CIRE": "CIRE",
     "LGT": "Lei Geral Tributária",
     "CPPT": "CPPT",
-    "CE": "Código da Estrada"
+    "CE": "Código da Estrada",
+    "TGDC_LEX": "Teoria Geral do Direito Civil"
 }
 
 const CivilResult = ({item, onPress}) => {
@@ -69,8 +71,22 @@ const CivilQaResult = ({item, onPress}) => {
 const CivilIndiceResult = ({item, onPress}) => {
     return (
         <TouchableOpacity onPress={onPress} style={{backgroundColor: "#f5fffc", paddingVertical: SIZES.radius, borderBottomWidth: 1, borderBottomColor: COLORS.gray10}}>
-            <Text style={{paddingLeft: SIZES.radius}}>Área Civil / {dict[item.type.split("_")[0]]} / Indíce / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>{dict[item.type.split("_")[0]]}</Text></Text>
-            <Text style={{paddingLeft: SIZES.radius, marginTop: SIZES.radius}}>{item.title}</Text>
+            <Text style={{paddingLeft: SIZES.radius}}><Text style={{color: "#42C6A5"}}>Área Civil</Text> / {dict[item.type.split("_")[0]]} / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>Indíce Temático</Text></Text>
+            <View style={{paddingVertical: SIZES.padding}}>
+                <Text style={{paddingLeft: SIZES.radius}}>{item.title1}</Text>
+                <Text style={{paddingLeft: SIZES.radius}}>{item.title2}</Text>
+            </View>
+        </TouchableOpacity>
+    )
+}
+
+const LexionarioCivilResult = ({item, onPress}) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={{backgroundColor: "#f5fffc", paddingVertical: SIZES.radius, borderBottomWidth: 1, borderBottomColor: COLORS.gray10}}>
+            <Text style={{paddingLeft: SIZES.radius}}><Text style={{color: "#42C6A5"}}>Área Civil</Text> / Lexionário / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>{dict[item.type]}</Text></Text>
+            <View style={{paddingVertical: SIZES.padding}}>
+                <Text style={{paddingLeft: SIZES.radius}}>{item.title}</Text>
+            </View>
         </TouchableOpacity>
     )
 }
@@ -138,7 +154,19 @@ const FiscalResult = ({item, onPress}) => {
 const OutroResult = ({item, onPress}) => {
     return (
         <TouchableOpacity onPress={onPress} style={{backgroundColor: "#ffe5e8", paddingVertical: SIZES.radius, borderBottomWidth: 1, borderBottomColor: COLORS.gray10}}>
-            <Text style={{paddingLeft: SIZES.radius}}><Text style={{color: "#FC9BA1"}}>Fiscal</Text> / Códigos / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>{dict[item.type]}</Text></Text>
+            <Text style={{paddingLeft: SIZES.radius}}><Text style={{color: "#FC9BA1"}}>Outros</Text> / Códigos / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>{dict[item.type]}</Text></Text>
+            <View style={{paddingVertical: SIZES.padding}}>
+                <Text style={{paddingLeft: SIZES.radius, marginTop: SIZES.radius}}>{item.title1}</Text>
+                <Text style={{paddingLeft: SIZES.radius}}>{item.title2}</Text>
+            </View>
+        </TouchableOpacity>
+    )
+}
+
+const RgitResult = ({item, onPress}) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={{backgroundColor: "#ffffff", paddingVertical: SIZES.radius, borderBottomWidth: 1, borderBottomColor: COLORS.gray10}}>
+            <Text style={{paddingLeft: SIZES.radius}}>Penal & Fiscal / Códigos / <Text style={{color: "#1e1e1e",fontWeight: "bold"}}>{dict[item.type]}</Text></Text>
             <View style={{paddingVertical: SIZES.padding}}>
                 <Text style={{paddingLeft: SIZES.radius, marginTop: SIZES.radius}}>{item.title1}</Text>
                 <Text style={{paddingLeft: SIZES.radius}}>{item.title2}</Text>
@@ -211,11 +239,15 @@ const SearchModal = ({sharedValue, setToogleState, onArticleSelect, codesToSearc
         return <CivilIndiceResult item={item} onPress={onResultPress}/>
     } else if (administrativoArea.includes(item.type)) {
         return <AdministrativoResult item={item} onPress={onResultPress}/>
+    } else if (civilLexionarioArea.includes(item.type)) {
+        return <LexionarioCivilResult item={item} onPress={onResultPress}/>
     } else if (trabalhoArea.includes(item.type)) {
         return <TrabalhoResult item={item} onPress={onResultPress}/>
     } else if (comercialArea.includes(item.type)) {
         return <ComercialResult item={item} onPress={onResultPress}/>
-    }  else if (fiscalArea.includes(item.type)) {
+    } else if (item.type === "RGIT") {
+        return <RgitResult item={item} onPress={onResultPress}/>
+    } else if (fiscalArea.includes(item.type)) {
         return <FiscalResult item={item} onPress={onResultPress}/>
     }  else if (penalArea.includes(item.type)) {
         return <PenalResult item={item} onPress={onResultPress}/>

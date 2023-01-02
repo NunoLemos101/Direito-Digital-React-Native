@@ -5,6 +5,13 @@ const intersectArray = (array1, array2) => array1.filter(value => array2.include
 
 const intersectArrayOfObjects = (array1, array2) => array1.filter(obj1 => !array2.some(obj2 => obj1.id === obj2.id));
 
+function removeDuplicateObjects(array) {
+  const result = array.filter((item, index, self) =>
+      self.some((other) => other.id === item.id && other.type === item.type)
+  );
+  return result
+}
+
 function compareWords(userInputtedWord, listedWord) {
 
   let maxPoints = 0;
@@ -58,7 +65,7 @@ function compareWords(userInputtedWord, listedWord) {
   }
 }
 
-export const searchForResults = (input, codesToSearch = dummyData.codigos) => {
+export const searchForResults = (input, codesToSearch = dummyData.codigos_to_search) => {
 
   let perf_beginning = performance.now()
   const queryWords = []
@@ -124,6 +131,10 @@ export const searchForResults = (input, codesToSearch = dummyData.codigos) => {
     }
   } else {
     matches = items[0]
+  }
+
+  if (matches) {
+    matches = removeDuplicateObjects(matches)
   }
 
   matches && matches.map(article => articleCount[article.type]++)

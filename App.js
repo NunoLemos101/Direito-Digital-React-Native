@@ -23,6 +23,7 @@ import { TransitionPresets } from "@react-navigation/stack";
 import StripeCheckout from "./screens/Checkout/StripeCheckout";
 import QADetails from "./screens/Course/QADetails";
 import LexionarioDetails from "./screens/Course/LexionarioDetails";
+import {generateQuery} from "./data/generateQuery";
 
 const Stack = createSharedElementStackNavigator();
 const options = {

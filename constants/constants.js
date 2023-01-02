@@ -19,7 +19,7 @@ const bottom_tabs = [
         id: 2,
         label: screens.profile,
         icon: require("../assets/icons/profile.png")
-    }
+    },
 ]
 
 const qa_details_tabs = [

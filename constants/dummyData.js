@@ -292,6 +292,18 @@ const tgdc_lex = {
     last_edited: "1 de Janeiro de 2023",
 }
 
+const cc_indice = {
+    id: 30,
+    code: "CC_INDICE",
+    articles: CC.indice
+}
+
+const cpc_indice = {
+    id: 31,
+    code: "CPC_INDICE",
+    articles: cpc.indice
+}
+
 const codigos = [
     CC.object,
     cpc,
@@ -313,6 +325,38 @@ const codigos = [
     cvm,
     cire
 ]
+
+const codigos_to_search = [
+    CC.object,
+    cpc,
+    crp,
+    crcivil,
+    cp,
+    cpp,
+    ct,
+    cpt,
+    cpa,
+    cpta,
+    csc,
+    crcomercial,
+    lgt,
+    cppt,
+    rgit,
+    ce,
+    ncpi,
+    cvm,
+    cire,
+    tgdc_lex,
+    qa_pc_executivo,
+    qa_pc_declarativo,
+    cc_indice,
+    cpc_indice
+]
+
+const indices_dict = {
+    cc: cc_indice,
+    cpc: cpc_indice
+}
 
 const codigos_dict = {
     cc: cc,
@@ -338,11 +382,6 @@ const codigos_dict = {
     qa_pc_executivo: qa_pc_executivo,
     qa_pc_declarativo: qa_pc_declarativo,
     tgdc_lex: tgdc_lex
-}
-
-
-const qa_dict = {
-    qa_pc_executivo: qa_pc_executivo
 }
 
 const categories_thumbnails = {
@@ -447,4 +486,4 @@ const top_searches = [
 ]
 
 
-export default { categories, top_searches, codigos, codigos_dict, qa_dict, categories_thumbnails, tgdc_lex };
+export default { categories, top_searches, codigos, codigos_to_search, codigos_dict, indices_dict, categories_thumbnails, tgdc_lex };

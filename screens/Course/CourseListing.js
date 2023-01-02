@@ -271,7 +271,7 @@ const CourseListing = ({navigation, route}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: COLORS.white}}>
-        <StatusBar backgroundColor={category.themeColor} barStyle={"default"}/>
+        <StatusBar backgroundColor={searchModal ? COLORS.primary3 : category.themeColor} barStyle={"default"}/>
       {renderResults()}
       {renderHeader()}
       { searchModal && <SearchModal setToogleState={toogleSearchModal} onArticleSelect={onArticleSelectSearchBar} sharedValue={searchModalSharedValue} placeholder={`Pesquisar em ${category.title}`} codesToSearch={[...category.tabs[0].items, ...category.tabs[2].items, ...category.tabs[3].items]}/> }

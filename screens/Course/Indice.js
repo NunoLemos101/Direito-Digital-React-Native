@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import {COLORS, constants, FONTS, icons, images, SIZES} from "../../constants";
+import {COLORS, constants, dummyData, FONTS, icons, images, SIZES} from "../../constants";
 import IconButton from "../../components/iconButton";
 import {useSharedValue, withDelay, withTiming} from "react-native-reanimated";
 import ArticlesAPI from "../../api/v1/articles";
@@ -21,6 +21,7 @@ import ArticleNotesAPI from "../../api/v1/article-notes";
 import {useNavigation} from "@react-navigation/native";
 import axios from "axios";
 import LoadingModal from "../../components/LoadingModal";
+import SearchModal from "../../components/SearchModal";
 
 const course_details_tabs = constants.indice_tabs.map((course_details_tab) => ({
   ...course_details_tab,
@@ -286,21 +287,31 @@ const Tabs = ({scrollX, onTabPress}) => {
 
 const Indice = ({ navigation, route }) => {
   const { selectedCategory } = route.params;
-
-    const [selectedArticles, setSelectedArticles] = useState(selectedCategory.indice[1].artigos)
+  const indiceObject = dummyData.indices_dict[selectedCategory.code.toLowerCase()]
+    const [selectedArticles, setSelectedArticles] = useState(indiceObject.articles[1].artigos)
     const [article, setArticle] = useState({notes: []})
     const [articleId, setArticleId] = useState(selectedCategory.articles["0"][1].id)
     const [noteToEdit, setNoteToEdit] = useState(null);
     const [fontModal, toogleFontModal] = useState(false)
+    const [searchModal, toogleSearchModal] = useState(false)
     const [createNoteModal, toogleCreateNoteModal] = useState(false)
 
     const flatListRef = useRef();
   const scrollX = useRef(new Animated.Value(0)).current;
 
+    const searchModalSharedValue = useSharedValue(SIZES.height)
+
     const fontModalSharedValue1 = useSharedValue(SIZES.height)
     const fontModalSharedValue2 = useSharedValue(SIZES.height)
 
     const createNoteModalSharedValue = useSharedValue(SIZES.height)
+
+    const onArticleSelectSearchBar = (article) => {
+        setArticleId(article.id)
+        toogleSearchModal(false)
+        searchModalSharedValue.value = withTiming(SIZES.height, { duration: 500})
+        onTabPress(2)
+    }
 
     const onNoteCreateCallback = (response) => {
         setArticle(prevState => ({...prevState, notes: [...prevState.notes, response.data]}))
@@ -414,6 +425,11 @@ const onCreateNoteModalClose = () => {
           createNoteModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
       }
 
+      const onSearchButtonPress = () => {
+          toogleSearchModal(true)
+          searchModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
+      }
+
       const onFontButtonPress = () => {
           toogleFontModal(true)
           fontModalSharedValue1.value = withTiming(0, {duration: 100})
@@ -446,6 +462,12 @@ const onCreateNoteModalClose = () => {
                     containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
                 />
                 <IconButton
+                    icon={icons.search}
+                    onPress={onSearchButtonPress}
+                    iconStyle={{tintColor: COLORS.white, width: 25, height: 25}}
+                    containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
+                />
+                <IconButton
                     icon={icons.font}
                     onPress={onFontButtonPress}
                     iconStyle={{tintColor: COLORS.white}}
@@ -467,10 +489,11 @@ const onCreateNoteModalClose = () => {
   return (
     <View style={{flex: 1, backgroundColor: COLORS.white}}>
         <StatusBar backgroundColor={COLORS.primary3} barStyle={"light-content"}/>
-        {renderHeader()}
+        {(!searchModal && !createNoteModal) ? renderHeader() : null}
         {renderImageSection()}
         {renderContent()}
         {createNoteModal && <CreateNoteModal onDeleteCallback={onNoteDelete} onCloseCallback={onCreateNoteModalClose} onEditCallback={onNoteEditCallback} editNote={noteToEdit} onCreateCallback={onNoteCreateCallback} articleId={articleId} sharedValue={createNoteModalSharedValue}/>}
+        {searchModal && <SearchModal setToogleState={toogleSearchModal} onArticleSelect={onArticleSelectSearchBar} sharedValue={searchModalSharedValue} codesToSearch={[indiceObject]} placeholder={`Pesquisar em ${selectedCategory.title} (Índice Temático)`}/>}
         <FontModal sharedValue1={fontModalSharedValue1} sharedValue2={fontModalSharedValue2} />
     </View>
   )

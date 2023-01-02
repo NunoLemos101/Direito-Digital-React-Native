@@ -56,7 +56,7 @@ export const generateQuery = () => {
     ]
 
     const qa_datasets = [
-        {data: TGDC_LEX.articles, type: "TGDC"},
+        {data: TGDC_LEX.articles, type: "TGDC_LEX"},
         {data: QA_PC_EXECUTIVO.questionsAndAnswers, type: "QA_PC_EXECUTIVO"},
         {data: QA_PC_DECLARATIVO.questionsAndAnswers, type: "QA_PC_DECLARATIVO"}
     ]
@@ -115,27 +115,29 @@ export const generateQuery = () => {
     })
 
     indice_datasets.map((dataset) => {
-        if (dataset.artigos) {
-            dataset.artigos.map((article) => {
-                article["type"] = dataset.type
-                if (article.title2) {
-                    const article_splited = article.title2.split(' ')
-                    article_splited.map((word) => {
-                        word = removeCharacters(word, unwantedCharacters)
-                        if (!unwantedWords.includes(word) && word !== '') {
-                            if (!query.words.includes(word)) {
-                                query.words.push(word)
+        dataset.data.map(item => {
+            if (item.artigos) {
+                item.artigos.map((article) => {
+                    article["type"] = dataset.type
+                    if (article.title2) {
+                        const article_splited = article.title2.split(' ')
+                        article_splited.map((word) => {
+                            word = removeCharacters(word, unwantedCharacters)
+                            if (!unwantedWords.includes(word) && word !== '') {
+                                if (!query.words.includes(word)) {
+                                    query.words.push(word)
+                                }
+                                if (query.articles[word]) {
+                                    query.articles[word].push(article)
+                                } else {
+                                    query.articles[word] = [article]
+                                }
                             }
-                            if (query.articles[word]) {
-                                query.articles[word].push(article)
-                            } else {
-                                query.articles[word] = [article]
-                            }
-                        }
-                    })
-                }
-            })
-        }
+                        })
+                    }
+                })
+            }
+        })
     })
 
     return query
