@@ -56,6 +56,7 @@ const close = require("../assets/icons/close.png")
 const font = require("../assets/icons/font.png")
 const bold = require("../assets/icons/bold.png")
 const italic = require("../assets/icons/italic-font.png")
+const edit = require("../assets/icons/icons8-pencil-90.png")
 
 export default {
     all,
@@ -115,5 +116,6 @@ export default {
     close,
     font,
     bold,
-    italic
+    italic,
+    edit
 }

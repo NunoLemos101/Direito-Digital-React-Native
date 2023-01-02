@@ -20,7 +20,9 @@ import axios from "axios";
 import RestAuthAPI from "./api/v1/rest-auth";
 import indice from "./screens/Course/Indice";
 import { TransitionPresets } from "@react-navigation/stack";
-
+import StripeCheckout from "./screens/Checkout/StripeCheckout";
+import QADetails from "./screens/Course/QADetails";
+import LexionarioDetails from "./screens/Course/LexionarioDetails";
 
 const Stack = createSharedElementStackNavigator();
 const options = {
@@ -62,7 +64,10 @@ const LoggedInNavigator = () => (
     <Stack.Screen name="Dashboard" component={MainLayout}/>
     <Stack.Screen name="CourseListing" component={CourseListing} options={() => options}/>
     <Stack.Screen name={"CourseDetails"} component={CourseDetails} options={() => ({...TransitionPresets.SlideFromRightIOS})} />
+    <Stack.Screen name={"QADetails"} component={QADetails} options={() => ({...TransitionPresets.SlideFromRightIOS})}/>
+    <Stack.Screen name={"LexionarioDetails"} component={LexionarioDetails} options={() => ({...TransitionPresets.SlideFromRightIOS})}/>
     <Stack.Screen name={"Indice"} component={indice} options={() => ({...TransitionPresets.SlideFromRightIOS})}/>
+    <Stack.Screen name={"StripeCheckout"} component={StripeCheckout}/>
   </Stack.Navigator>
 )
 
@@ -115,7 +120,6 @@ const RootNavigator = () => {
 }
 
 const App = () => {
-
   return (
       <Provider store={store}>
         <NavigationContainer>

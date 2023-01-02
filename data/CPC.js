@@ -4701,7 +4701,7 @@ const articles = {
     {
       "title1": "  Artigo 812.º",
       "title2": " Determinação da modalidade de venda e do valor base dos bens",
-      "id": 3155
+      "id": 9849
     },
     {
       "title1": "  Artigo 813.º",
@@ -6648,6 +6648,55 @@ const articles = {
   ]
 }
 
+const indice = [
+  {
+    letter: "A",
+    id: 10000
+  },
+  {
+    name: "Audiência final",
+    id: 1,
+    artigos: [
+      {
+        "title1": "  Artigo 599.º",
+        "title2": "  Juiz da audiência final",
+        "id": 2942
+      },
+      {
+        "title1": "  Artigo 603.º",
+        "title2": "  Realização da audiência final",
+        "id": 2946
+      },
+      {
+        "title1": "  Artigo 604.º",
+        "title2": "  Tentativa de concíliação e demais atos a praticar",
+        "id": 2947
+      },
+      {
+        "title1": "  Artigo 606.º",
+        "title2": "  Publicidade e continuidade da audiência final",
+        "id": 2949
+      },
+    ]
+  },
+  {
+    name: "Audiência prévia",
+    id: 2,
+    artigos: [
+      {
+        "title1": "  Artigo 591.º",
+        "title2": "  Audiência prévia",
+        "id": 2934
+      },
+      {
+        "title1": "  Artigo 592.º",
+        "title2": " Não realização da audiência prévia",
+        "id": 2935
+      },
+    ]
+  }
+]
+
 const rows = [
   {title: `Artigos (1 - 100)`, id: 0, type: 'CPC'},
   {title: `Artigos (101 - 200)`, id: 1, type: 'CPC'},
@@ -6663,4 +6712,4 @@ const rows = [
   {title: `Artigos (1101 - 1139)`, id: 11, type: 'CPC'},
 ]
 
-export default { articles, rows };
+export default { articles, indice, rows };

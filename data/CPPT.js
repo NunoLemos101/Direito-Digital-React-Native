@@ -1589,8 +1589,8 @@ const articles = {
 
 const rows = [
     {title: `Artigos (1 - 100)`, id: 0, type: 'CPPT'},
-    {title: `Artigos (101 - 200)`, id: 0, type: 'CPPT'},
-    {title: `Artigos (201 - 293)`, id: 0, type: 'CPPT'},
+    {title: `Artigos (101 - 200)`, id: 1, type: 'CPPT'},
+    {title: `Artigos (201 - 293)`, id: 2, type: 'CPPT'},
 ]
 
 export default { articles, rows}

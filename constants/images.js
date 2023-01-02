@@ -1,4 +1,5 @@
 const bg = require("../assets/images/bg.png")
+const cube = require("../assets/images/cube.png")
 const bg_dark = require("../assets/images/bg_dark.png")
 const doc = require("../assets/images/doc.png")
 const bg_1 = require("../assets/images/bg_1.png")
@@ -19,6 +20,8 @@ const thumbnail_3 = require("../assets/images/thumbnail_3.png")
 const thumbnail_4 = require("../assets/images/thumbnail_4.png")
 
 export default {
+    cube,
+
     bg,
     bg_dark,
     doc,

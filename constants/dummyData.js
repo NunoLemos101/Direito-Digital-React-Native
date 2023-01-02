@@ -16,6 +16,10 @@ import CRCivil from "../data/CRCivil";
 import CE from "../data/CE";
 import NCPI from "../data/NCPI";
 import CVM from "../data/CVM";
+import QA_PC_EXECUTIVO from "../data/questionsAndAnswers/QA_PC_EXECUTIVO";
+import QA_PC_DECLARATIVO from "../data/questionsAndAnswers/QA_PC_DECLARATIVO";
+import TGDC_LEX from "../data/lexionario/TGDC_LEX";
+import CIRE from "../data/CIRE";
 
 const cc = {
     id: 1,
@@ -34,10 +38,10 @@ const cpc = {
     code: "CPC",
     rows: CPC.rows,
     articles: CPC.articles,
-    indice: CC.indice,
+    indice: CPC.indice,
     title: "Código Processo Civil",
     article_count: "1144 Artigos",
-    last_edited: "13 de Setembro de 2021",
+    last_edited: "27 de Junho de 2021",
     thumbnail: require("../assets/images/books.jpeg")
 }
 
@@ -46,7 +50,7 @@ const crp = {
     code: "CRP",
     rows: CRP.rows,
     articles: CRP.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Constituição",
     article_count: "296 Artigos",
     last_edited: "12 de Agosto de 2005",
@@ -58,7 +62,7 @@ const cp = {
     code: "CP",
     rows: CP.rows,
     articles: CP.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Código Penal",
     article_count: "389 Artigos",
     last_edited: "21 de Dezembro de 2021",
@@ -70,7 +74,7 @@ const cpp = {
     code: "CPP",
     rows: CPP.rows,
     articles: CPP.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Código Processo Penal",
     article_count: "548 Artigos",
     last_edited: "21 de Dezembro de 2021",
@@ -82,7 +86,7 @@ const ct = {
     code: "CT",
     rows: CT.rows,
     articles: CT.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Código do Trabalho",
     article_count: "566 Artigos",
     last_edited: "3 de Janeiro de 2022",
@@ -94,7 +98,7 @@ const cpt = {
     code: "CPT",
     rows: CPT.rows,
     articles: CPT.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Código de Processo do Trabalho",
     article_count: "249 Artigos",
     last_edited: "9 de Setembro de 2019",
@@ -106,7 +110,7 @@ const cpa = {
     code: "CPA",
     rows: CPA.rows,
     articles: CPA.articles,
-    indice: CC.indice,
+    indice: null,
     title: "CPA",
     article_count: "203 Artigos",
     last_edited: "16 de Novembro de 2020",
@@ -118,7 +122,7 @@ const cpta = {
     code: "CPTA",
     rows: CPTA.rows,
     articles: CPTA.articles,
-    indice: CC.indice,
+    indice: null,
     title: "CPTA",
     article_count: "210 Artigos",
     last_edited: "16 de Agosto de 2021",
@@ -130,7 +134,7 @@ const csc = {
     code: "CSC",
     rows: CSC.rows,
     articles: CSC.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Sociedades Comerciais",
     article_count: "617 Artigos",
     last_edited: "11 de Janeiro de 2021",
@@ -142,7 +146,7 @@ const crcomercial = {
     code: "CRComercial",
     rows: CRComercial.rows,
     articles: CRComercial.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Registo Comercial",
     article_count: "155 Artigos",
     last_edited: "11 de Janeiro de 2021",
@@ -154,7 +158,7 @@ const lgt = {
     code: "LGT",
     rows: LGT.rows,
     articles: LGT.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Lei Geral Tributária",
     article_count: "134 Artigos",
     last_edited: "26 de Fevereiro de 2021",
@@ -166,7 +170,7 @@ const cppt = {
     code: "CPPT",
     rows: CPPT.rows,
     articles: CPPT.articles,
-    indice: CC.indice,
+    indice: null,
     title: "CPPT",
     article_count: "316 Artigos",
     last_edited: "16 de Agosto de 2021",
@@ -178,7 +182,7 @@ const rgit = {
     code: "RGIT",
     rows: RGIT.rows,
     articles: RGIT.articles,
-    indice: CC.indice,
+    indice: null,
     title: "RGIT",
     article_count: "140 Artigos",
     last_edited: "26 de Fevereiro de 2021",
@@ -190,7 +194,7 @@ const crcivil = {
     code: "CRCivil",
     rows: CRCivil.rows,
     articles: CRCivil.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Registo Civil",
     article_count: "347 Artigos",
     last_edited: "14 de Agosto de 2018",
@@ -202,7 +206,7 @@ const ce = {
     code: "CE",
     rows: CE.rows,
     articles: CE.articles,
-    indice: CC.indice,
+    indice: null,
     title: "Código da Estrada",
     article_count: "199 Artigos",
     last_edited: "24 de Agosto de 2021",
@@ -214,7 +218,7 @@ const ncpi = {
     code: "NCPI",
     rows: NCPI.rows,
     articles: NCPI.articles,
-    indice: CC.indice,
+    indice: null,
     title: "NCPI",
     article_count: "375 Artigos",
     last_edited: "29 de Janeiro de 2021",
@@ -226,11 +230,66 @@ const cvm = {
     code: "CVM",
     rows: CVM.rows,
     articles: CVM.articles,
-    indice: CC.indice,
+    indice: null,
     title: "CVM",
     article_count: "655 Artigos",
     last_edited: "31 de Dezembro de 2021",
     thumbnail: require("../assets/images/law.jpeg")
+}
+
+const juri_pc = {
+    id: 19,
+    code: "JURI_PC",
+    rows: CC.rows,
+    articles: CC.articles,
+    indice: CC.indice,
+    title: "Processo Civil",
+    article_count: "2381 Artigos",
+    last_edited: "10 de Janeiro de 2022",
+    thumbnail: require("../assets/images/books-2.jpg")
+}
+
+const cire = {
+    id: 20,
+    code: "CIRE",
+    rows: CIRE.rows,
+    articles: CIRE.articles,
+    indice: null,
+    title: "CIRE",
+    article_count: "304 Artigos",
+    last_edited: "10 de Janeiro de 2022",
+    thumbnail: require("../assets/images/books-2.jpg")
+}
+
+const qa_pc_executivo = {
+    id: 1,
+    code: "QA_PC_EXECUTIVO",
+    articles: QA_PC_EXECUTIVO.questionsAndAnswers,
+    title: "Processo Civil Executivo",
+    article_count: `${QA_PC_EXECUTIVO.questionsAndAnswers.length} Perguntas e Respostas`,
+    thumbnail: require("../assets/images/books-2.jpg"),
+    type: "QA"
+}
+
+const qa_pc_declarativo = {
+    id: 2,
+    code: "QA_PC_DECLARATIVO",
+    articles: QA_PC_DECLARATIVO.questionsAndAnswers,
+    title: "Processo Civil Declarativo",
+    article_count: `${QA_PC_DECLARATIVO.questionsAndAnswers.length} Perguntas e Respostas`,
+    thumbnail: require("../assets/images/books-2.jpg"),
+    type: "QA"
+}
+
+const tgdc_lex = {
+    id: 1,
+    code: "TGDC_LEX",
+    articles: TGDC_LEX.articles,
+    title: "Teoria Geral",
+    article_count: `${TGDC_LEX.articles.length} entradas`,
+    thumbnail: require("../assets/images/books-2.jpg"),
+    type: "LEXIONARIO",
+    last_edited: "1 de Janeiro de 2023",
 }
 
 const codigos = [
@@ -251,7 +310,8 @@ const codigos = [
     rgit,
     ce,
     ncpi,
-    cvm
+    cvm,
+    cire
 ]
 
 const codigos_dict = {
@@ -272,7 +332,17 @@ const codigos_dict = {
     rgit: rgit,
     ce: ce,
     ncpi: ncpi,
-    cvm: cvm
+    cvm: cvm,
+    cire: cire,
+    juri_pc: juri_pc,
+    qa_pc_executivo: qa_pc_executivo,
+    qa_pc_declarativo: qa_pc_declarativo,
+    tgdc_lex: tgdc_lex
+}
+
+
+const qa_dict = {
+    qa_pc_executivo: qa_pc_executivo
 }
 
 const categories_thumbnails = {
@@ -284,12 +354,26 @@ const categories_thumbnails = {
     "BG_6": require("../assets/images/bg_6.png"),
 }
 
+
+
 const categories = [
     {
         id: 0,
         key: "extra_0",
         title: "Área Civil",
         themeColor: "#42C6A5",
+        tabs:  [
+            {
+                label: "Códigos",
+                type: "CODIGOS",
+                items: [cc, cpc, crp, crcivil]
+            },
+            {
+                label: "Jurísprudencia",
+                type: "JURISPRUDENCIA",
+                items: [juri_pc]
+            }
+        ],
         codigos: [cc, cpc, crp, crcivil],
         thumbnail: require("../assets/images/bg_1.png")
     },
@@ -363,4 +447,4 @@ const top_searches = [
 ]
 
 
-export default { categories, top_searches, codigos, codigos_dict, categories_thumbnails };
+export default { categories, top_searches, codigos, codigos_dict, qa_dict, categories_thumbnails, tgdc_lex };

@@ -22,6 +22,28 @@ const bottom_tabs = [
     }
 ]
 
+const qa_details_tabs = [
+    {
+        id: 0,
+        label: "Perguntas"
+    },
+    {
+        id: 1,
+        label: "Respostas"
+    }
+]
+
+const lexionario_details_tabs = [
+    {
+        id: 0,
+        label: "Entradas"
+    },
+    {
+        id: 1,
+        label: "Ler"
+    }
+]
+
 const course_details_tabs = [
     {
         id: 0,
@@ -40,7 +62,7 @@ const course_details_tabs = [
 const indice_tabs = [
     {
         id: 0,
-        label: "Indíce",
+        label: "Índice",
     },
     {
         id: 1,
@@ -109,31 +131,71 @@ const font_families = [
         font: "monospace"
     },
     {
-        id: 3,
+        id: 1,
         font: "Roboto-Regular"
     },
     {
-        id: 5,
-        font: "sans-serif-light"
-    },
-    {
-        id: 6,
-        font: "sans-serif-thin"
-    },
-    {
-        id: 7,
+        id: 2,
         font: "sans-serif-condensed"
     },
     {
-        id: 8,
-        font: "sans-serif-medium"
+        id: 3,
+        font: "serif"
+    },
+]
+
+const code_tabs = [
+    {
+        id: 0,
+        label: "Códigos"
     },
     {
-        id: 9,
-        font: "serif"
+        id: 1,
+        label: "Jurísprudencia"
+    },
+    {
+        id: 2,
+        label: "Lexionário"
+    },
+    {
+        id: 3,
+        label: "Q&A"
     },
 ]
 
 const font_sizes = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40]
 
-export default { screens, bottom_tabs, course_details_tabs, months, week_days, translation_EN_PT, indice_tabs, class_types, font_families, font_sizes };
+const codes = [
+    "CC",
+    "CE",
+    "CP",
+    "CPA",
+    "CPC",
+    "CPP",
+    "CPPT",
+    "CPT",
+    "CPTA",
+    "CRCivil",
+    "CRComercial",
+    "CRP",
+    "CSC",
+    "LGT",
+    "NCPI",
+    "RGIT"
+]
+
+export default {
+    screens,
+    bottom_tabs,
+    course_details_tabs,
+    months,
+    week_days,
+    translation_EN_PT,
+    indice_tabs,
+    class_types,
+    font_families,
+    font_sizes,
+    codes,
+    code_tabs,
+    qa_details_tabs,
+    lexionario_details_tabs };

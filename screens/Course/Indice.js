@@ -1,15 +1,74 @@
 import React, { createRef, useCallback, useEffect, useRef, useState } from "react";
-import { Animated, FlatList, ImageBackground, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { COLORS, constants, FONTS, icons, SIZES } from "../../constants";
+import {
+    Animated,
+    FlatList,
+    Image,
+    ImageBackground,
+    ScrollView,
+    StatusBar,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
+import {COLORS, constants, FONTS, icons, images, SIZES} from "../../constants";
 import IconButton from "../../components/iconButton";
-import LineDivider from "../../components/LineDivider";
-import { useSharedValue } from "react-native-reanimated";
+import {useSharedValue, withDelay, withTiming} from "react-native-reanimated";
 import ArticlesAPI from "../../api/v1/articles";
+import {useSelector} from "react-redux";
+import FontModal from "../../components/FontModal";
+import CreateNoteModal from "../../components/CreateNoteModal";
+import ArticleNotesAPI from "../../api/v1/article-notes";
+import {useNavigation} from "@react-navigation/native";
+import axios from "axios";
+import LoadingModal from "../../components/LoadingModal";
 
 const course_details_tabs = constants.indice_tabs.map((course_details_tab) => ({
   ...course_details_tab,
   ref: createRef()
 }))
+
+const NotPremium = () => {
+
+    const navigation = useNavigation()
+    const [loading, setLoading] = useState(false)
+
+    const generateMonthlyCheckoutSession = async () => {
+        setLoading(true)
+        const response = await axios.get("/api/v1/checkout/price_1MGYloCxO5zuwwEZPgqNz14N")
+        navigation.navigate("StripeCheckout", {url: response.data.url})
+        setLoading(false)
+    }
+
+    const generateYearlyCheckoutSession = async () => {
+        setLoading(true)
+        const response = await axios.get("/api/v1/checkout/price_1MGYloCxO5zuwwEZPWbdm8wO")
+        navigation.navigate("StripeCheckout", {url: response.data.url})
+        setLoading(false)
+    }
+
+    return (
+        <View style={{marginTop: 20}}>
+            <Text style={{marginHorizontal: SIZES.padding, ...FONTS.h2}}>Torna-te Premium</Text>
+            <TouchableOpacity onPress={generateYearlyCheckoutSession} activeOpacity={0.5} style={{flexDirection: "row", backgroundColor:  "#f3f3f3", padding: 10, marginTop: 20, marginHorizontal: SIZES.padding, borderRadius: 5}}>
+                <Image style={{width: 50, height: 50, backgroundColor: COLORS.primary3, borderRadius: 5}} source={images.cube}/>
+                <View style={{flex: 1, marginLeft: 10}}>
+                    <Text style={{fontWeight: "bold", fontSize: 16, color: COLORS.black}}>Subscrição anual</Text>
+                    <Text style={{color: COLORS.gray50, marginTop: 10}}><Text style={{color: COLORS.gray40, textDecorationLine: "line-through"}}>100,00€ por ano</Text> 14,00€ por ano</Text>
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={generateMonthlyCheckoutSession} activeOpacity={0.5} style={{flexDirection: "row", backgroundColor: "#f3f3f3", padding: 10, marginTop: 10, marginHorizontal: SIZES.padding, borderRadius: 5}}>
+                <Image style={{width: 50, height: 50, backgroundColor: COLORS.primary3, borderRadius: 5}} source={images.cube}/>
+                <View style={{flex: 1, marginLeft: 10}}>
+                    <Text style={{fontWeight: "bold", fontSize: 16, color: COLORS.black}}>Subscrição mensal</Text>
+                    <Text style={{color: COLORS.gray50, marginTop: 10}}><Text style={{textDecorationLine: "line-through"}}>10,50€ por mês</Text> 1,50€ por mês</Text>
+                </View>
+            </TouchableOpacity>
+            <Text style={{fontSize: 10, marginTop: 10, paddingHorizontal: SIZES.padding, color: COLORS.gray50}}>Os preços de lançamento serão válidos até 31 de Janeiro de 2023.</Text>
+            <Countdown/>
+            { loading && <LoadingModal/>}
+        </View>
+    )
+}
 
 const TabContent = ({category, onPress}) => {
 
@@ -55,23 +114,100 @@ const TabContent2 = ({articles, onArticlePress}) => {
   )
 }
 
-const TabContent3 = ({articleId}) => {
+const TabContent3 = ({article, articleId, editNoteCallback}) => {
 
-  const [article, setArticle] = useState({})
-  const scrollRef = useRef()
+    const scrollRef = useRef()
+    const user = useSelector(state => state.reducer)
+    const fontSettings = useSelector(state => state.reducer.fontSettings)
+    const [displayPricing, setDisplayPricing] = useState(false)
 
-  const responseCallback = (response) => {
-    setArticle(response.data)
-    scrollRef.current?.scrollTo({y:0, animated: true});
-  }
+    useEffect(() => {
+        if (!user.subscription.is_valid) {
+            setDisplayPricing(true)
+            setTimeout(() => {
+                setDisplayPricing(false)
+            }, 10000)
+        }
+        scrollRef.current?.scrollTo({y:0, animated: true});
+    }, [articleId])
 
-  useEffect(() => {
-    ArticlesAPI.retrieve(articleId, responseCallback)
-  }, [articleId])
+    if (displayPricing) {
+        return (
+            <NotPremium/>
+        )
+    }
 
   return (
     <ScrollView ref={scrollRef} style={{paddingHorizontal: 10}}>
-      <Text selectable>{article.body}</Text>
+        {
+            article.notes.map((note, index) => {
+                if (note.position === "start") {
+                    return (
+                        <View key={index} style={{backgroundColor: note.backgroundColor, borderBottomWidth: 1, borderBottomColor: fontSettings.color, paddingTop: 10, paddingBottom: 10}}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                                <Text style={{
+                                    color: note.color,
+                                    fontFamily: note.fontFamily,
+                                    fontSize: note.fontSize,
+                                    lineHeight: note.lineHeight,
+                                    fontWeight: note.fontWeight,
+                                    fontStyle: note.fontStyle,
+                                    paddingTop: 1,
+                                    paddingHorizontal: 10,}} selectable>Ultima edição {new Date(note.last_edited).toLocaleDateString()}</Text>
+                                <IconButton
+                                    icon={icons.edit}
+                                    iconStyle={{tintColor: note.color, width: 25, height: 25}}
+                                    containerStyle={{width: 50, height: 50, justifyContent: "center"}}
+                                    onPress={() => editNoteCallback(note)}
+                                />
+                            </View>
+                            <Text style={{
+                                color: note.color,
+                                fontFamily: note.fontFamily,
+                                fontSize: note.fontSize,
+                                lineHeight: note.lineHeight,
+                                fontWeight: note.fontWeight,
+                                fontStyle: note.fontStyle,
+                                paddingHorizontal: 10, paddingTop: 10}} selectable>{note.body}</Text>
+                        </View>
+                    )
+                }
+            })
+        }
+      <Text style={{...fontSettings, paddingHorizontal: 10, paddingTop: 10}} selectable>{article.body}</Text>
+        {
+            article.notes.map((note, index) => {
+                if (note.position === "end") {
+                    return (
+                        <View key={index} style={{backgroundColor: note.backgroundColor, borderTopWidth: 1, borderTopColor: fontSettings.color, paddingTop: 10, paddingBottom: index + 1 === article.notes.length ? 50 : 10}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                                <Text style={{
+                                    color: note.color,
+                                    fontFamily: note.fontFamily,
+                                    fontSize: note.fontSize,
+                                    lineHeight: note.lineHeight,
+                                    fontWeight: note.fontWeight,
+                                    fontStyle: note.fontStyle,
+                                    paddingHorizontal: 10,
+                                    paddingTop: 10}} selectable>Ultima edição {new Date(note.last_edited).toLocaleDateString()}</Text>
+                                <IconButton
+                                    icon={icons.edit}
+                                    iconStyle={{tintColor: note.color, width: 25, height: 25}}
+                                    containerStyle={{width: 50, height: 50, justifyContent: "center"}}
+                                    onPress={() => editNoteCallback(note)}
+                                />
+                            </View>
+                            <Text style={{color: note.color,
+                                fontFamily: note.fontFamily,
+                                fontSize: note.fontSize,
+                                lineHeight: note.lineHeight,
+                                fontWeight: note.fontWeight,
+                                fontStyle: note.fontStyle, paddingHorizontal: 10, paddingTop: 10}} selectable>{note.body}</Text>
+                        </View>
+                    )
+                }
+            })
+        }
     </ScrollView>
   )
 }
@@ -151,14 +287,49 @@ const Tabs = ({scrollX, onTabPress}) => {
 const Indice = ({ navigation, route }) => {
   const { selectedCategory } = route.params;
 
-  const [selectedArticles, setSelectedArticles] = useState(selectedCategory.indice[1].artigos)
-  const [articleId, setArticleId] = useState(selectedCategory.articles["0"][1].id)
-  const [searchModal, toogleSearchModal] = useState(false)
+    const [selectedArticles, setSelectedArticles] = useState(selectedCategory.indice[1].artigos)
+    const [article, setArticle] = useState({notes: []})
+    const [articleId, setArticleId] = useState(selectedCategory.articles["0"][1].id)
+    const [noteToEdit, setNoteToEdit] = useState(null);
+    const [fontModal, toogleFontModal] = useState(false)
+    const [createNoteModal, toogleCreateNoteModal] = useState(false)
 
-  const flatListRef = useRef();
+    const flatListRef = useRef();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  const searchModalSharedValue = useSharedValue(SIZES.height)
+    const fontModalSharedValue1 = useSharedValue(SIZES.height)
+    const fontModalSharedValue2 = useSharedValue(SIZES.height)
+
+    const createNoteModalSharedValue = useSharedValue(SIZES.height)
+
+    const onNoteCreateCallback = (response) => {
+        setArticle(prevState => ({...prevState, notes: [...prevState.notes, response.data]}))
+        onCreateNoteModalClose()
+    }
+
+    const onNoteEditCallback = (response) => {
+        const newState = article.notes.map(note => {
+            if (note.id === response.data.id) {
+                return {...response.data}
+            }
+            return note
+        })
+        setArticle(prevState => ({...prevState, notes: newState}))
+        onCreateNoteModalClose()
+    }
+
+    const onNoteDelete = () => {
+        ArticleNotesAPI.delete(noteToEdit.id);
+        const newState = article.notes.filter((note) => note.id !== noteToEdit.id)
+        setArticle(prevState => ({...prevState, notes: newState}))
+        onCreateNoteModalClose()
+    }
+
+const onCreateNoteModalClose = () => {
+    setNoteToEdit(null)
+    toogleCreateNoteModal(false)
+    createNoteModalSharedValue.value = withTiming(SIZES.height, { duration: 500})
+}
 
   const onArticlePress = (item) => {
     setArticleId(item.id)
@@ -192,7 +363,14 @@ const Indice = ({ navigation, route }) => {
     )
   }
 
-  function renderContent() {
+    const handleEditNoteIcon = (note) => {
+        setNoteToEdit(note)
+        toogleCreateNoteModal(true)
+        createNoteModalSharedValue.value = withTiming(0, {duration: 100})
+    }
+
+
+    function renderContent() {
     return (
       <View style={{flex: 1}}>
         {/* renderSearchBar() */ }
@@ -220,7 +398,7 @@ const Indice = ({ navigation, route }) => {
                   onTabPress(1)
                 }}/>}
                 {index === 1 && <TabContent2 articles={selectedArticles} onArticlePress={onArticlePress}/>}
-                {index === 2 && <TabContent3 articleId={articleId}/>}
+                {index === 2 && <TabContent3 article={article} articleId={articleId} editNoteCallback={handleEditNoteIcon}/>}
               </View>
             )
           }}
@@ -230,45 +408,70 @@ const Indice = ({ navigation, route }) => {
   }
 
   function renderHeader() {
+
+      const onAddNoteButtonPress = () => {
+          toogleCreateNoteModal(true)
+          createNoteModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
+      }
+
+      const onFontButtonPress = () => {
+          toogleFontModal(true)
+          fontModalSharedValue1.value = withTiming(0, {duration: 100})
+          fontModalSharedValue2.value = withDelay(100, withTiming(0, {duration: 500}))
+      }
+
     return (
-      <View style={{
-        position: "absolute",
-        top: SIZES.height > 800 ? 40 : 20,
-        left: 0,
-        right: 0,
-        flexDirection: "row",
-        paddingHorizontal: SIZES.padding,
-        zIndex: 1
-      }}>
-        <View style={{flex: 1}}>
-          <IconButton
-            icon={icons.back}
-            onPress={() => navigation.goBack()}
-            iconStyle={{width: 25, height: 25, tintColor: COLORS.black}}
-            containerStyle={{width: 40, height: 40, alignItems: "center", justifyContent: "center", backgroundColor: COLORS.white, borderRadius: 20}}
-          />
+        <View style={{
+            position: "absolute",
+            top: SIZES.height > 800 ? 40 : 20,
+            left: 0,
+            right: 0,
+            flexDirection: "row",
+            paddingHorizontal: SIZES.padding,
+            zIndex: 1
+        }}>
+            <View style={{flex: 1}}>
+                <IconButton
+                    icon={icons.back}
+                    onPress={() => navigation.goBack()}
+                    iconStyle={{width: 25, height: 25, tintColor: COLORS.black}}
+                    containerStyle={{width: 40, height: 40, alignItems: "center", justifyContent: "center", backgroundColor: COLORS.white, borderRadius: 20}}
+                />
+            </View>
+            <View style={{flexDirection: "row"}}>
+                <IconButton
+                    icon={icons.edit}
+                    onPress={onAddNoteButtonPress}
+                    iconStyle={{tintColor: COLORS.white, width: 25, height: 25}}
+                    containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
+                />
+                <IconButton
+                    icon={icons.font}
+                    onPress={onFontButtonPress}
+                    iconStyle={{tintColor: COLORS.white}}
+                    containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
+                />
+            </View>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <IconButton
-            icon={icons.search}
-            iconStyle={{tintColor: COLORS.white, width: 25, height: 25}}
-            containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
-          />
-          <IconButton
-            icon={icons.sun}
-            iconStyle={{tintColor: COLORS.white}}
-            containerStyle={{width: 50, height: 50, alignItems: "center", justifyContent: "center"}}
-          />
-        </View>
-      </View>
     )
   }
 
+    const articleResponseCallback = (response) => {
+        setArticle(response.data)
+    }
+
+    useEffect(() => {
+        ArticlesAPI.retrieve(articleId, articleResponseCallback)
+    }, [articleId])
+
   return (
     <View style={{flex: 1, backgroundColor: COLORS.white}}>
-      {renderHeader()}
-      {renderImageSection()}
-      {renderContent()}
+        <StatusBar backgroundColor={COLORS.primary3} barStyle={"light-content"}/>
+        {renderHeader()}
+        {renderImageSection()}
+        {renderContent()}
+        {createNoteModal && <CreateNoteModal onDeleteCallback={onNoteDelete} onCloseCallback={onCreateNoteModalClose} onEditCallback={onNoteEditCallback} editNote={noteToEdit} onCreateCallback={onNoteCreateCallback} articleId={articleId} sharedValue={createNoteModalSharedValue}/>}
+        <FontModal sharedValue1={fontModalSharedValue1} sharedValue2={fontModalSharedValue2} />
     </View>
   )
 }

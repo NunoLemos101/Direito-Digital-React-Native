@@ -44,6 +44,10 @@ const FontModal = ({sharedValue1, sharedValue2}) => {
         FontSettingsAPI.offlineUpdate(tempFontSettings, dispatch)
     }
 
+    const resetFontSettings = () => {
+        FontSettingsAPI.resetFont(dispatch);
+    }
+
     const containerAnimatedStyle = useAnimatedStyle(() => {
         return {
             opacity: interpolate(sharedValue1.value, [SIZES.height, 0], [0, 1]),
@@ -88,8 +92,21 @@ const FontModal = ({sharedValue1, sharedValue2}) => {
                         backgroundColor: COLORS.white
                     }, contentAnimatedStyle]}
                 >
+
                     <View style={{marginTop: SIZES.padding, flexDirection: "row", paddingHorizontal: SIZES.padding}}>
-                        <View style={{width: 60}} />
+                        <TextButton
+                            label={"Reset"}
+                            contentContainerStyle={{
+                                width: 60,
+                                backgroundColor: null
+                            }}
+                            labelStyle={{
+                                color: COLORS.black,
+                                ...FONTS.body3
+                            }}
+                            onPress={resetFontSettings}
+                        />
+
                         <Text style={{flex: 1, textAlign: "center", ...FONTS.h1}}>
                             Fonte
                         </Text>

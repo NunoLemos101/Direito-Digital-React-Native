@@ -1,6 +1,9 @@
 import query from "./data/search";
+import {constants, dummyData} from "./constants";
 
 const intersectArray = (array1, array2) => array1.filter(value => array2.includes(value));
+
+const intersectArrayOfObjects = (array1, array2) => array1.filter(obj1 => !array2.some(obj2 => obj1.id === obj2.id));
 
 function compareWords(userInputtedWord, listedWord) {
 
@@ -55,12 +58,12 @@ function compareWords(userInputtedWord, listedWord) {
   }
 }
 
-export const searchForResults = (input) => {
+export const searchForResults = (input, codesToSearch = dummyData.codigos) => {
+
   let perf_beginning = performance.now()
   const queryWords = []
   const dictWords = {}
   let unwantedWords = ['a', 'e', 'o', 'da', 'de', 'do', 'em', ' que', 'no', 'nos', 'das', 'dos', 'ao', 'ou', 'à', '', ' ']
-
   // Compares Words
   input.split(' ').map((inputtedWord) => {
     if (unwantedWords.includes(inputtedWord)) {
@@ -69,7 +72,6 @@ export const searchForResults = (input) => {
     dictWords[inputtedWord] = [];
     query.words.map((word) => {
       const result = compareWords(inputtedWord, word) * 100;
-
       if (result > 80 && inputtedWord.length > 2) {
         if (!queryWords.includes(word)) {
           queryWords.push(word);
@@ -90,13 +92,15 @@ export const searchForResults = (input) => {
     }
     items.push([])
     dictWords[key].map((word) => {
-      query.dict[word].map((item) => {
-        if (item.id) {
-          items[index - reducedIndex].push(item)
-        } else {
-          item.map((subitem) => {
-            items[index - reducedIndex].push(subitem)
-          })
+      query.articles[word].map((item) => {
+        if (codesToSearch.some(code => code.code === item.type)) {
+          if (item.id) {
+            items[index - reducedIndex].push(item)
+          } else {
+            item.map((subitem) => {
+              items[index - reducedIndex].push(subitem)
+            })
+          }
         }
       })
     })

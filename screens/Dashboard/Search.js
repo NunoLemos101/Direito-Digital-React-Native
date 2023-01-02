@@ -1,119 +1,92 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
     View,
-    Text,
-    Image,
-    TextInput
+    Text
 } from 'react-native';
 import { FlatList } from "react-native-gesture-handler";
 import Animated, {
     useAnimatedScrollHandler,
-    useSharedValue,
+    useSharedValue, withDelay, withTiming,
 } from "react-native-reanimated";
 import TextButton from "../../components/TextButton";
 import AreaCard from "../../components/AreaCard";
-import { COLORS, FONTS, SIZES, icons, dummyData } from "../../constants";
+import {COLORS, FONTS, SIZES, dummyData, icons} from "../../constants";
 import { useNavigation } from "@react-navigation/native";
+import {useSelector} from "react-redux";
+import IconButton from "../../components/iconButton";
+import SearchModal from "../../components/SearchModal";
+
+const Section = ({containerStyle, title, onPress, buttonLabel, children}) => {
+    return (
+        <View style={{...containerStyle}}>
+            <View style={{flexDirection: "row", paddingHorizontal: SIZES.padding, alignItems: "center"}}>
+                <Text style={{flex: 1, ...FONTS.h2}}>{title}</Text>
+                <IconButton
+                    icon={icons.search}
+                    iconStyle= {{width: 18, height: 18}}
+                    onPress={onPress}
+                    containerStyle={{width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: COLORS.primary3}}/>
+            </View>
+            {children}
+        </View>
+    )
+}
 
 const Search = () => {
 
     const scrollViewRef = useRef();
     const navigation = useNavigation();
+    const categories = useSelector(state => state.reducer.categorySettings)
+    const [searchModal, toogleSearchModal] = useState(false)
 
     const scrollY = useSharedValue(0);
     const onScroll = useAnimatedScrollHandler((event) => {
         scrollY.value = event.contentOffset.y
     })
 
-    function renderTopSearches() {
-        return (
-          <View style={{marginTop: SIZES.padding}}>
-              <Text style={{marginHorizontal: SIZES.padding, ...FONTS.h2}}>Top Searches</Text>
-              <FlatList
-                horizontal
-                data={dummyData.top_searches}
-                listKey="TopSearches"
-                keyExtractor={item => `TopSearches-${item.id}`}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{marginTop: SIZES.radius}}
-                renderItem={({item, index}) => (
-                  <TextButton
-                    label={item.label}
-                    contentContainerStyle={{
-                        paddingVertical: SIZES.radius,
-                        paddingHorizontal: SIZES.padding,
-                        marginLeft: index === 0 ? SIZES.padding : SIZES.radius,
-                        marginRight: index === dummyData.top_searches.length - 1 ? SIZES.padding : 0,
-                        borderRadius: SIZES.radius,
-                        backgroundColor: COLORS.gray10
-                    }}
-                    labelStyle={{color: COLORS.gray50, ...FONTS.h3}}
-                  />
-                )}
-              />
-          </View>
-        )
+    const searchModalSharedValue = useSharedValue(SIZES.height)
+
+    const onArticleSelectSearchBar = (article) => {
+        toogleSearchModal(false)
+        searchModalSharedValue.value = withTiming(SIZES.height, { duration: 500})
+        navigation.navigate("CourseDetails", { selectedCategory: dummyData.codigos[0], initialArticle: article })
     }
 
     function renderBrowseCategories() {
         return (
-          <View style={{marginTop: SIZES.padding}}>
-              <Text style={{marginHorizontal: SIZES.padding, ...FONTS.h2}}>Pesquisar nas Categorias</Text>
-              <FlatList
-                data={dummyData.categories}
-                numColumns={2}
-                scrollEnabled={false}
-                listKey="BrowseCategories"
-                keyExtractor={item => `BrowseCategories-${item.id}`}
-                contentContainerStyle={{marginTop: SIZES.radius}}
-                renderItem={({item, index}) => (
-                  <AreaCard
-                    category={item}
-                    sharedElementPrefix={"Search"}
-                    onPress={() => navigation.navigate("CourseListing", {category: item, sharedElementPrefix: "Search", initOnSearchModal: true})}
-                    containerStyle={{
-                        height: 130,
-                        width: (SIZES.width - (SIZES.padding * 2) - SIZES.radius) / 2,
-                        marginTop: SIZES.radius,
-                        marginLeft: (index + 1) % 2 === 0 ? SIZES.radius : SIZES.padding
-                    }}
-                  />
-                )}
-              />
-          </View>
+            <Section title={"Pesquisar nas Categorias"} onPress={() => {
+                toogleSearchModal(true)
+                searchModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
+            }}>
+                <FlatList
+                    data={categories}
+                    numColumns={2}
+                    scrollEnabled={false}
+                    listKey="BrowseCategories"
+                    keyExtractor={item => `BrowseCategories-${item.id}`}
+                    contentContainerStyle={{marginTop: SIZES.radius}}
+                    renderItem={({item, index}) => (
+                        <AreaCard
+                            category={item}
+                            sharedElementPrefix={"Search"}
+                            onPress={() => navigation.navigate("CourseListing", {category: item, sharedElementPrefix: "Search", initOnSearchModal: true})}
+                            containerStyle={{
+                                height: 130,
+                                width: (SIZES.width - (SIZES.padding * 2) - SIZES.radius) / 2,
+                                marginTop: SIZES.radius,
+                                marginLeft: (index + 1) % 2 === 0 ? SIZES.radius : SIZES.padding
+                            }}
+                        />
+                    )}
+                />
+            </Section>
         )
     }
 
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.white }}>
-        <View style={{
-          height: 75,
-          backgroundColor: COLORS.primary3,
-          paddingVertical: 10,
-          marginBottom: 10,
-          paddingHorizontal: SIZES.padding,
-        }}>
-            <View style={{
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              width: SIZES.width - (SIZES.padding * 2),
-              paddingHorizontal: SIZES.radius,
-              borderRadius: SIZES.radius,
-              backgroundColor: COLORS.white
-            }}>
-              <Image source={icons.search} style={{width: 25, height: 25, tintColor: COLORS.gray40}}/>
-              <TextInput
-                style={{flex: 1, marginLeft: SIZES.base, ...FONTS.h4}}
-                value=""
-                placeholder="Search Topics, Courses & Educators"
-                placeholderTextColor={COLORS.gray}
-              />
-            </View>
-        </View>
           <Animated.ScrollView
             ref={scrollViewRef}
-            contentContainerStyle={{paddingBottom: 300}}
+            contentContainerStyle={{paddingBottom: 100, paddingTop: 10}}
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
             keyboardDismissMode="on-drag"
@@ -124,12 +97,9 @@ const Search = () => {
                 }
             }}
           >
-              { renderTopSearches() }
               { renderBrowseCategories() }
-
+              <SearchModal setToogleState={toogleSearchModal} onArticleSelect={onArticleSelectSearchBar} paddingBottom={90} sharedValue={searchModalSharedValue} placeholder={"Pesquisar em todas as categorias"} />
           </Animated.ScrollView>
-
-      </View>
     )
 }
 

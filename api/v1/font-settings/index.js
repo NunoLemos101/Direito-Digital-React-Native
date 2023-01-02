@@ -9,6 +9,18 @@ class FontSettingsAPI {
         axios.get(this.baseEndpoint).then(response => callback(response))
     }
 
+    static resetFont(dispatch) {
+        const defaultFont = {
+            "fontFamily": "Roboto-Regular",
+            "fontSize": 14,
+            "color": "#7F7F7F",
+            "backgroundColor": "#FFFFFF",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+        }
+        axios.put(this.baseEndpoint, defaultFont).then(response => dispatch(updateFontSettings(response)))
+    }
+
     static update(data, dispatch) {
         axios.put(this.baseEndpoint, data).then(response => dispatch(updateFontSettings(response)))
     }

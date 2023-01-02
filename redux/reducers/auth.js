@@ -5,6 +5,8 @@ const initialState = {
     token: null,
     username: null,
     pictureURI: null,
+    socialAccount: null,
+    subscription: null,
     versionName: null,
     dateJoined: null,
     isPremium: null,
@@ -22,7 +24,6 @@ const initialState = {
 }
 
 const authSuccess = (state, action) => {
-    console.log(action)
     let pictureURI;
     try {
         pictureURI = JSON.parse(action.data.social_account.extra_data).picture
@@ -33,13 +34,17 @@ const authSuccess = (state, action) => {
     action.data.category_settings.forEach(item => {
         item.thumbnail_text = item.thumbnail
         item.thumbnail = dummyData.categories_thumbnails[item.thumbnail]
-        item.codigos.forEach((obj, index) => (item.codigos[index] = dummyData.codigos_dict[obj]))
+        item.tabs.forEach((tab) => {
+            tab.items.forEach((tabItem,index) => (tab.items[index] = dummyData.codigos_dict[tabItem]))
+        })
     })
 
     return updateObject(state, {
         token: action.data.key,
         username: action.data.username,
         pictureURI: pictureURI,
+        socialAccount: action.data.social_account,
+        subscription: action.data.subscription,
         versionName: action.data.android_version_name,
         dateJoined: action.data.date_joined,
         isPremium: action.data.premium,

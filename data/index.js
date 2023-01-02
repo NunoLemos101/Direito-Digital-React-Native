@@ -14,8 +14,12 @@ import CPTA from "./CPTA";
 import CPPT from "./CPPT";
 import RGIT from "./RGIT";
 import NCPI from "./NCPI";
+import CIRE from "./CIRE";
 import CRCivil from "./CRCivil";
 import CRComercial from "./CRComercial";
+import QA_PC_EXECUTIVO from "./questionsAndAnswers/QA_PC_EXECUTIVO";
+import QA_PC_DECLARATIVO from "./questionsAndAnswers/QA_PC_DECLARATIVO";
+import TGDC_LEX from "./lexionario/TGDC_LEX";
 
 
 export default {
@@ -30,10 +34,15 @@ export default {
     CPT,
     CSC,
     LGT,
+    CVM,
     CPTA,
     CPPT,
     RGIT,
     NCPI,
+    CIRE,
     CRCivil,
-    CRComercial
+    CRComercial,
+    QA_PC_EXECUTIVO,
+    QA_PC_DECLARATIVO,
+    TGDC_LEX
 };

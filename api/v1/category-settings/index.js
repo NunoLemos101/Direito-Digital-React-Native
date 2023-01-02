@@ -1,5 +1,6 @@
 import axios from "axios";
 import {updateCategorySettings, updateCategorySettingsOffline} from "../../../redux/actions/auth";
+import {tags} from "react-native-svg/lib/typescript/xml";
 
 function cloneNestedArray(data) {
     const ouputArray = []
@@ -9,8 +10,13 @@ function cloneNestedArray(data) {
         tempItem.themeColor = item.themeColor
         tempItem.thumbnail = item.thumbnail_text
         tempItem.title = item.title
-        item.codigos.forEach((item1, index) => {
-            tempItem.codigos.push(item1.code.toLowerCase())
+        tempItem.tabs = []
+        item.tabs.forEach(tab => {
+            const tempTabItem = {id: tab.id, label: tab.label, type: tab.type, items: []}
+            tab.items.forEach(item => {
+                tempTabItem.items.push(item.code.toLowerCase())
+            })
+            tempItem.tabs.push(tempTabItem)
         })
         ouputArray.push(tempItem)
     })
@@ -35,6 +41,7 @@ class CategorySettingsAPI {
         // before the HTTP request giving the user
         // a better experience
         dispatch(updateCategorySettingsOffline(data))
+        cloneNestedArray(data)
         axios.put(this.baseEndpoint, {categorySettings: cloneNestedArray(data)})
     }
 }

@@ -6,6 +6,8 @@ import SearchModal from "./SearchModal";
 import FontModal from "./FontModal";
 import AreaCard from "./AreaCard";
 import DraggableAreaCard from "./DraggableAreaCard";
+import QACard from "./QACard";
+import LexionarioCard from "./LexionarioCard";
 
 export default {
   IconLabel,
@@ -15,5 +17,7 @@ export default {
   SearchModal,
   FontModal,
   AreaCard,
-  DraggableAreaCard
+  DraggableAreaCard,
+  QACard,
+  LexionarioCard
 }

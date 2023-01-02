@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
+    View,
+    Text,
+    Image,
+    FlatList,
+    StyleSheet, StatusBar, TouchableOpacity,
 } from "react-native";
 
 import Animated, {
@@ -21,9 +21,11 @@ import { SharedElement } from "react-navigation-shared-element";
 
 import IconButton from "../../components/iconButton";
 import LineDivider from "../../components/LineDivider";
-import { COLORS, FONTS, SIZES, images, icons, dummyData } from "../../constants";
+import {COLORS, FONTS, SIZES, images, icons, dummyData, constants} from "../../constants";
 import CategoryCard from "../../components/CategoryCard";
 import SearchModal from "../../components/SearchModal";
+import QACard from "../../components/QACard";
+import LexionarioCard from "../../components/LexionarioCard";
 
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
@@ -32,21 +34,21 @@ const HEADER_HEIGHT = 250;
 const CourseListing = ({navigation, route}) => {
 
   const {category, sharedElementPrefix, initOnSearchModal} = route.params;
-  console.log(category.themeColor)
   const flatListRef = useRef();
   const scrollY = useSharedValue(0);
   const [searchModal, toogleSearchModal] = useState(false)
+  const [selectedTab, setSelectedTab] = useState(category.tabs[0])
   const searchModalSharedValue = useSharedValue(SIZES.height)
 
-
-
-  const onScroll = useAnimatedScrollHandler((event) => { scrollY.value = event.contentOffset.y })
+  const onScroll = useAnimatedScrollHandler((event) => {
+      scrollY.value = event.contentOffset.y })
 
   const headerSharedValue = useSharedValue(80);
 
   const onArticleSelectSearchBar = (article) => {
     toogleSearchModal(false)
     searchModalSharedValue.value = withTiming(SIZES.height, { duration: 500})
+                                                            // Problem Here
     navigation.navigate("CourseDetails", { selectedCategory: dummyData.codigos[0], initialArticle: article })
   }
 
@@ -153,11 +155,12 @@ const CourseListing = ({navigation, route}) => {
           resizeMode="contain"
           style={[{
             position: "absolute",
+              opacity: 0,
             right: 40,
             bottom: -40,
             width: 100,
             height: 200
-          }, headerFadeAnimatedStyle, headerTranslateAnimatedStyle, headerHideOnScrollAnimatedStyle]}
+          }, headerFadeAnimatedStyle, headerHideOnScrollAnimatedStyle, headerTranslateAnimatedStyle]}
         />
 
       </Animated.View>
@@ -168,42 +171,89 @@ const CourseListing = ({navigation, route}) => {
     return (
       <AnimatedFlatList
         ref={flatListRef}
-        data={category.codigos}
+        data={selectedTab.items}
         keyExtractor={item => `Results-${item.id}`}
-        contentContainerStyle={{paddingHorizontal: SIZES.padding}}
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
         keyboardDismissMode="on-drag"
         onScroll={onScroll}
         ListHeaderComponent={
-        <View style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: 270,
-          marginBottom: SIZES.base
-        }}>
-          <Text style={{flex: 1, ...FONTS.body3}}>{category.codigos.length} Resultados</Text>
-          <IconButton
-            icon={icons.search}
-            onPress={() => {
-              toogleSearchModal(true)
-              searchModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
-            }}
-            iconStyle= {{width: 20, height: 20}}
-            containerStyle={{width: 40, height: 40, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: category.themeColor}}/>
-        </View>
+          <>
+              <FlatList contentContainerStyle={{marginTop: 270, marginBottom: SIZES.base}} data={category.tabs} horizontal={true} showsHorizontalScrollIndicator={false} renderItem={({item, index}) => {
+                  return (
+                      <TouchableOpacity style={{
+                          backgroundColor: category.themeColor,
+                          paddingVertical: 5,
+                          paddingHorizontal: 10,
+                          marginLeft: index === 0 ? SIZES.padding : SIZES.base,
+                          borderRadius: SIZES.base,
+                      }}
+                        onPress={() => setSelectedTab(item)}
+                      >
+                          <Text style={{fontFamily: item.font, color: COLORS.white}}>{item.label}</Text>
+                      </TouchableOpacity>
+                  )
+              }}/>
+              <View style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: SIZES.base,
+                  paddingHorizontal: SIZES.padding
+              }}>
+                  <Text style={{flex: 1, ...FONTS.body3}}>{selectedTab.items.length} Resultados</Text>
+                  <IconButton
+                      icon={icons.search}
+                      onPress={() => {
+                          toogleSearchModal(true)
+                          searchModalSharedValue.value = withDelay(500, withTiming(0, {duration: 500}))
+                      }}
+                      iconStyle= {{width: 20, height: 20}}
+                      containerStyle={{width: 40, height: 40, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: category.themeColor}}/>
+              </View>
+          </>
       }
-      renderItem={({item, index}) => (
-        <CategoryCard
-          themeColor={category.themeColor}
-          category={item}
-          containerStyle={{
-            marginVertical: SIZES.padding,
-            marginTop: index === 0 ? SIZES.radius : SIZES.padding,
-            radius: SIZES.padding
-        }}
-        />
-      )}
+      renderItem={({item, index}) => {
+          if (item.type === "QA") {
+              return (
+                  <QACard
+                      themeColor={category.themeColor}
+                      category={item}
+                      containerStyle={{
+                          paddingHorizontal: SIZES.padding,
+                          marginVertical: SIZES.padding,
+                          marginTop: index === 0 ? SIZES.radius : SIZES.padding,
+                          radius: SIZES.padding
+                      }}
+                  />
+              )
+          } else if (item.type === "LEXIONARIO") {
+              return (
+                  <LexionarioCard
+                      themeColor={category.themeColor}
+                      category={item}
+                      containerStyle={{
+                          paddingHorizontal: SIZES.padding,
+                          marginVertical: SIZES.padding,
+                          marginTop: index === 0 ? SIZES.radius : SIZES.padding,
+                          radius: SIZES.padding
+                      }}
+                  />
+              )
+          } else {
+              return (
+                  <CategoryCard
+                      themeColor={category.themeColor}
+                      category={item}
+                      containerStyle={{
+                          paddingHorizontal: SIZES.padding,
+                          marginVertical: SIZES.padding,
+                          marginTop: index === 0 ? SIZES.radius : SIZES.padding,
+                          radius: SIZES.padding
+                      }}
+                  />
+              )
+          }
+      }}
         ItemSeparatorComponent={() => (
           <LineDivider lineStyle={{backgroundColor: COLORS.gray10}} />
         )}
@@ -221,10 +271,10 @@ const CourseListing = ({navigation, route}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: COLORS.white}}>
-
+        <StatusBar backgroundColor={category.themeColor} barStyle={"default"}/>
       {renderResults()}
       {renderHeader()}
-      { searchModal ? <SearchModal setToogleState={toogleSearchModal} onArticleSelect={onArticleSelectSearchBar} sharedValue={searchModalSharedValue}/> : null }
+      { searchModal && <SearchModal setToogleState={toogleSearchModal} onArticleSelect={onArticleSelectSearchBar} sharedValue={searchModalSharedValue} placeholder={`Pesquisar em ${category.title}`} codesToSearch={[...category.tabs[0].items, ...category.tabs[2].items, ...category.tabs[3].items]}/> }
     </View>
   )
 }

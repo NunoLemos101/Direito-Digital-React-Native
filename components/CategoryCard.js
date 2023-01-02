@@ -41,11 +41,12 @@ const CategoryCard = ({containerStyle, category, themeColor="#42C6A5"}) => {
           borderRadius: SIZES.radius,
           marginTop: 10,
         }}
+            disabled={category.indice === null}
           onPress={onIndicePress}
         >
-          <View style={{flexDirection: "row", alignItems: "center", backgroundColor: COLORS.primary3, paddingVertical: 5, paddingRight: 10, borderRadius: SIZES.radius}}>
+          <View style={{flexDirection: "row", alignItems: "center", backgroundColor:    category.indice ? COLORS.primary3 : COLORS.primary5, paddingVertical: 5, paddingRight: 10, borderRadius: SIZES.radius}}>
             <Image source={icons.information} resizeMode={"contain"} style={{marginLeft: 10, width: 20, height: 20, tintColor: COLORS.white}}/>
-            <Text style={{color: COLORS.white, ...FONTS.h3, marginLeft: 5}}>Indíce Temático</Text>
+            <Text style={{color: COLORS.white, ...FONTS.h3, marginLeft: 5}}>{category.indice ? "Indíce Temático" : "Indíce brevemente"}</Text>
           </View>
         </TouchableOpacity>
       </View>
