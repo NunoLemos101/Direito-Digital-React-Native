@@ -1056,7 +1056,7 @@ const articles = {
     {
       "title1": "Artigo 154.º/B ",
       "title2": "Casamento forçado",
-      "id": 4587
+      "id": 4588
     },
     {
       "title1": "Artigo 154.º/C ",

@@ -910,7 +910,7 @@ const articles = {
             "id": 4751
         },
         {
-            "title1": "Artigo 153.º . Desempenho da função de perito",
+            "title1": "Artigo 153.º",
             "title2": "Artigo 153.º . Desempenho da função de perito",
             "id": 4752
         },
